@@ -1,0 +1,4 @@
+<%= form_with url: url, method: :get, class: "search", data: { controller: "search", turbo_frame: "workflow_list", action: "input->search#schedule" } do |form| %>
+  <%= form.label :q, label %>
+  <div class="search-controls"><%= form.search_field :q, value: @query, maxlength: 200, placeholder: placeholder, autocomplete: "off" %><%= form.submit "Найти", class: "button button--secondary", data: { turbo_submits_with: "Поиск…" } %></div>
+<% end %>

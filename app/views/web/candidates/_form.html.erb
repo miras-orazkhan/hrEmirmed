@@ -1,0 +1,12 @@
+<%= form_with scope: :candidate, url: @candidate.persisted? ? candidate_path(@candidate) : candidates_path, method: @candidate.persisted? ? :patch : :post, class: "form-stack" do |f| %>
+  <div class="field"><%= f.label :full_name, "ФИО" %><%= f.text_field :full_name, value: form_value(:candidate, :full_name, @candidate.full_name), required: true, maxlength: 200, autocomplete: "name" %></div>
+  <div class="form-grid"><div class="field"><%= f.label :city, "Город" %><%= f.text_field :city, value: form_value(:candidate, :city, @candidate.city) %></div><div class="field"><%= f.label :preferred_language, "Язык общения" %><%= f.text_field :preferred_language, value: form_value(:candidate, :preferred_language, @candidate.preferred_language), placeholder: "Например, русский или казахский" %></div></div>
+  <fieldset><legend>Контакты</legend><p class="hint">Телефон — в международном формате, начиная с +. Чтобы убрать контакт, очистите его значение.</p>
+    <% contacts = Array(@contacts).map { |contact| contact.respond_to?(:attributes) ? contact.attributes : contact.to_h.stringify_keys } %>
+    <% (contacts + [{"kind" => "phone", "value" => ""}, {"kind" => "email", "value" => ""}]).each_with_index do |contact, i| %>
+      <div class="contact-row"><div class="field"><%= label_tag "contact_kind_#{i}", "Тип контакта #{i + 1}" %><%= select_tag "candidate[contacts_attributes][][kind]", options_for_select([["Телефон", "phone"], ["Email", "email"]], contact["kind"]), id: "contact_kind_#{i}" %></div><div class="field"><%= label_tag "contact_value_#{i}", "Контакт #{i + 1}" %><%= text_field_tag "candidate[contacts_attributes][][value]", contact["value"], id: "contact_value_#{i}", maxlength: 254 %></div></div>
+    <% end %>
+  </fieldset>
+  <div class="field"><%= f.label :summary, "Заметки о кандидате" %><%= f.text_area :summary, value: form_value(:candidate, :summary, @candidate.summary), rows: 5 %></div>
+  <div class="actions"><%= f.submit "Сохранить кандидата", class: "button", data: { turbo_submits_with: "Сохраняем…" } %><%= link_to "Отмена", @candidate.persisted? ? candidate_path(@candidate) : candidates_path, class: "button button--quiet" %></div>
+<% end %>

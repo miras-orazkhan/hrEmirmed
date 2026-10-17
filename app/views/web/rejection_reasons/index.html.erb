@@ -1,0 +1,13 @@
+<% content_for :title, "Причины отказа" %>
+<header class="page-header"><div><h1>Причины отказа</h1><p class="muted">Причины доступны в истории рассмотрений; запись можно отключить.</p></div><% if allowed?("manage.rejection_reason") %><%= link_to "Добавить причину", new_rejection_reason_path, class: "button", data: { turbo_frame: "_top" } %><% end %></header>
+<%= render "web/shared/search", url: rejection_reasons_path, label: "Поиск по названию", placeholder: "Введите начало названия" %>
+<%= turbo_frame_tag "workflow_list", data: { turbo_action: "advance" } do %>
+  <% if @reasons.any? %>
+    <div class="table-wrap"><table><thead><tr><th>Причина</th><th>Статус</th><% if allowed?("manage.rejection_reason") %><th>Действия</th><% end %></tr></thead><tbody>
+      <% @reasons.each do |reason| %><tr id="<%= dom_id(reason) %>"><td data-label="Причина"><%= reason.name %></td><td data-label="Статус"><%= reason.active? ? "Активна" : "Отключена" %></td><% if allowed?("manage.rejection_reason") %><td data-label="Действия"><%= link_to "Изменить", edit_rejection_reason_path(reason), data: { turbo_frame: "_top" } %></td><% end %></tr><% end %>
+    </tbody></table></div>
+  <% else %>
+    <div class="empty"><h2>Причин пока нет</h2><p class="muted">Попробуйте изменить поиск.</p></div>
+  <% end %>
+  <div class="pagination"><% if params[:cursor].present? %><%= link_to "К началу списка", url_for(only_path: true, q: params[:q]), class: "button button--quiet" %><% end %><% if @next_cursor %><%= link_to "Следующие 50", url_for(only_path: true, q: params[:q], cursor: @next_cursor), class: "button button--secondary", rel: "next" %><% end %></div>
+<% end %>

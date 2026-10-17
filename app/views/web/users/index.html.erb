@@ -1,0 +1,15 @@
+<% content_for :title, "Сотрудники" %>
+<header class="page-header"><div><h1>Сотрудники</h1><p class="muted">Учётные записи, роли и подразделения.</p></div><%= link_to "Добавить сотрудника", new_user_path, class: "button" %></header>
+<%= render "web/shared/search", url: users_path, label: "Поиск сотрудника", placeholder: "Начало ФИО или логина" %>
+<%= turbo_frame_tag "workflow_list", data: { turbo_action: "advance" } do %>
+  <% if @users.any? %>
+    <div class="table-wrap"><table><thead><tr><th>Сотрудник</th><th>Роль</th><th>Филиал и подразделения</th><th>Доступ</th><th></th></tr></thead><tbody>
+      <% @users.each do |user| %>
+        <tr id="<%= dom_id(user) %>"><td data-label="Сотрудник"><strong><%= link_to user.full_name, user_path(user), data: { turbo_frame: "_top" } %></strong><br><span class="muted"><%= user.login %></span></td><td data-label="Роль"><%= user.role.name %></td><td data-label="Филиал и подразделения"><%= user.branch.name %><br><span class="muted"><%= user.departments.map(&:name).join(", ") %></span></td><td data-label="Доступ"><%= user.active? ? "Активен" : "Отключён" %></td><td data-label="Действия"><%= link_to "Изменить", edit_user_path(user), data: { turbo_frame: "_top" } %></td></tr>
+      <% end %>
+    </tbody></table></div>
+  <% else %>
+    <div class="empty"><h2><%= @query.present? ? "Сотрудники не найдены" : "Сотрудников пока нет" %></h2><p class="muted"><%= @query.present? ? "Измените запрос и попробуйте снова." : "Добавьте первую учётную запись для доступа к системе." %></p></div>
+  <% end %>
+  <%= render "web/shared/pagination" %>
+<% end %>

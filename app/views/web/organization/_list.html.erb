@@ -1,0 +1,13 @@
+<% collection = @records %>
+<% columns = { "branches" => [["Название", :name], ["Адрес", :address]], "departments" => [["Название", :name], ["Филиал", ->(record) { record.branch.name }]], "legal_entities" => [["Название", :name], ["Регистрационный номер", :registration_number]] }.fetch(resource_name) %>
+<% if collection.any? %>
+  <div class="table-wrap"><table><thead><tr><% columns.each do |label, _| %><th><%= label %></th><% end %><% if allowed?("manage.organization") %><th>Действия</th><% end %></tr></thead><tbody>
+    <% collection.each do |record| %><tr id="<%= dom_id(record) %>"><% columns.each do |label, value| %><td data-label="<%= label %>"><%= value.respond_to?(:call) ? value.call(record) : record.public_send(value).presence || "—" %></td><% end %><% if allowed?("manage.organization") %><td data-label="Действия"><%= link_to "Изменить", public_send("edit_#{resource_name.singularize}_path", record), data: { turbo_frame: "_top" } %></td><% end %></tr><% end %>
+  </tbody></table></div>
+<% else %>
+  <div class="empty"><h2>Записей пока нет</h2><p class="muted">Попробуйте изменить поиск или фильтр.</p></div>
+<% end %>
+<div class="pagination">
+  <% if params[:cursor].present? %><%= link_to "К началу списка", url_for(only_path: true, q: params[:q], branch_id: params[:branch_id]), class: "button button--quiet" %><% end %>
+  <% if @next_cursor %><%= link_to "Следующие 50", url_for(only_path: true, cursor: @next_cursor, q: params[:q], branch_id: params[:branch_id]), class: "button button--secondary", rel: "next" %><% end %>
+</div>

@@ -1,0 +1,75 @@
+<% content_for :title, @requisition.vacancy_template_version.title %>
+
+<header class="page-header">
+  <div>
+    <%= link_to "Заявки на подбор", job_requisitions_path %>
+    <h1><%= @requisition.vacancy_template_version.title %></h1>
+    <p class="muted"><%= @requisition.department.name %> · Заявка №<%= @requisition.id %></p>
+  </div>
+  <div class="actions">
+    <%= state_badge(@requisition.status) %>
+    <% if edits_requisition?(@requisition) %>
+      <%= link_to "Изменить условия", edit_job_requisition_path(@requisition), class: "button button--secondary" %>
+    <% end %>
+  </div>
+</header>
+
+<div class="document">
+  <dl class="details">
+    <dt>Заполнено мест</dt>
+    <dd><%= @requisition.filled_positions_count %> из <%= @requisition.positions_count %></dd>
+    <dt>Версия условий</dt>
+    <dd><%= @version.version_number %></dd>
+    <dt>График работы</dt>
+    <dd><%= @version.work_schedule %></dd>
+    <dt>Зарплата</dt>
+    <dd><%= number_with_delimiter(@version.salary_amount, delimiter: " ") %> <%= @version.salary_currency %></dd>
+    <dt>Желаемый выход</dt>
+    <dd><%= date_label(@version.desired_start_on) %></dd>
+    <dt>Собеседование</dt>
+    <dd><%= state_label(@version.interview_format) %></dd>
+    <dt>Стажировка</dt>
+    <dd><%= @version.internship_duration.presence || "Не указана" %></dd>
+  </dl>
+
+  <% if @version.additional_questions.any? %>
+    <h2>Дополнительные вопросы</h2>
+    <ul>
+      <% @version.additional_questions.each do |question| %>
+        <li><%= question %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <% if allowed?("read.recruitment_campaign") %>
+    <p class="section"><%= link_to "Открыть кампанию подбора", recruitment_campaign_path(@requisition.recruitment_campaign_id) %></p>
+  <% end %>
+
+  <% if manages_requisition?(@requisition) %>
+    <section class="section">
+      <h2>Управление подбором</h2>
+      <div class="actions">
+        <% if %w[ready recruiting].include?(@requisition.status) %>
+          <%= button_to "Приостановить", pause_job_requisition_path(@requisition), class: "button button--secondary", data: { turbo_submits_with: "Сохраняем…" } %>
+        <% end %>
+        <% if @requisition.status == "paused" %>
+          <%= button_to "Возобновить", resume_job_requisition_path(@requisition), class: "button", data: { turbo_submits_with: "Сохраняем…" } %>
+        <% end %>
+      </div>
+
+      <% if %w[ready recruiting paused].include?(@requisition.status) %>
+        <details>
+          <summary>Отменить заявку</summary>
+          <p>Активные рассмотрения по этой заявке будут завершены.</p>
+          <%= form_with scope: :job_requisition, url: cancel_job_requisition_path(@requisition), class: "form-stack" do |f| %>
+            <div class="field">
+              <%= f.label :allow_next_application, "Разрешить кандидатам другие заявки?" %>
+              <%= f.select :allow_next_application, [["Да", "true"], ["Нет", "false"]], { prompt: "Примите решение" }, required: true %>
+            </div>
+            <%= f.submit "Отменить заявку", class: "button button--danger", data: { turbo_confirm: "Отменить заявку и завершить её активные рассмотрения?", turbo_submits_with: "Отменяем…" } %>
+          <% end %>
+        </details>
+      <% end %>
+    </section>
+  <% end %>
+</div>

@@ -1,0 +1,8 @@
+<% content_for :title, "Филиалы" %>
+<%= render "web/organization/nav" %>
+<header class="page-header"><div><h1>Филиалы</h1><p class="muted">Организационные данные для работы системы.</p></div><% if allowed?("manage.organization") %><%= link_to "Добавить запись", new_branch_path, class: "button", data: { turbo_frame: "_top" } %><% end %></header>
+<%= render "web/shared/search", url: branches_path, label: "Поиск по названию", placeholder: "Введите начало названия" %>
+<%= turbo_frame_tag "workflow_list", data: { turbo_action: "advance" } do %>
+  
+  <%= render "web/organization/list" %>
+<% end %>

@@ -1,0 +1,8 @@
+<% content_for :title, "Подразделения" %>
+<%= render "web/organization/nav" %>
+<header class="page-header"><div><h1>Подразделения</h1><p class="muted">Организационные данные для работы системы.</p></div><% if allowed?("manage.organization") %><%= link_to "Добавить запись", new_department_path, class: "button", data: { turbo_frame: "_top" } %><% end %></header>
+<%= render "web/shared/search", url: departments_path, label: "Поиск по названию", placeholder: "Введите начало названия" %>
+<%= turbo_frame_tag "workflow_list", data: { turbo_action: "advance" } do %>
+  <%= form_with url: departments_path, method: :get, class: "search", data: { turbo_frame: "workflow_list" } do |f| %><%= f.label :branch_id, "Филиал" %><div class="search-controls"><%= f.select :branch_id, options_from_collection_for_select(@branches, :id, :name, params[:branch_id]), include_blank: "Все доступные филиалы" %><%= f.submit "Показать", class: "button button--secondary" %></div><%= hidden_field_tag :q, params[:q] %><% end %>
+  <%= render "web/organization/list" %>
+<% end %>

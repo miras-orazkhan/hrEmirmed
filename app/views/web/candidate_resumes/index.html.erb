@@ -1,0 +1,1 @@
+<% content_for :title, "Резюме" %><header class="page-header"><div><%= link_to @candidate.full_name, candidate_path(@candidate) %><h1>Резюме кандидата</h1></div></header><div class="document"><%= render "files", resumes: @resumes %><%= render "web/shared/pagination" %><% if editable_candidate?(@candidate) %><%= render "upload" %><% end %></div>

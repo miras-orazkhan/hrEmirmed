@@ -1,0 +1,48 @@
+<% content_for :title, "Кампания подбора" %>
+
+<header class="page-header">
+  <div>
+    <%= link_to "Кампании", recruitment_campaigns_path %>
+    <h1><%= @campaign.vacancy_template.latest_version&.title || "Кампания №#{@campaign.id}" %></h1>
+    <p class="muted">Рекрутер: <%= @campaign.recruiter.full_name %></p>
+  </div>
+  <%= state_badge(@campaign.status) %>
+</header>
+
+<div class="document">
+  <h2>Заявки кампании</h2>
+  <p class="hint">Показаны первые 50 заявок кампании.</p>
+
+  <% if @requisitions.empty? %>
+    <p class="muted">Заявок пока нет.</p>
+  <% end %>
+
+  <ul class="file-list">
+    <% @requisitions.each do |request| %>
+      <li>
+        <% if allowed?("read.job_requisition") %>
+          <%= link_to "#{request.department.name} · заявка №#{request.id}", job_requisition_path(request) %>
+        <% else %>
+          <span><%= request.department.name %> · №<%= request.id %></span>
+        <% end %>
+        <%= state_badge(request.status) %>
+      </li>
+    <% end %>
+  </ul>
+
+  <% if @campaign.status == "active" %>
+    <h2>Поисковый запрос</h2>
+    <p><%= @campaign.search_query %></p>
+    <p class="hint">Запущено <%= date_label(@campaign.approved_at) %>.</p>
+  <% elsif allowed?("launch.recruitment_campaign") && (current_user.admin? || @campaign.recruiter_id == current_user.id) %>
+    <h2>Запустить подбор</h2>
+    <p class="muted">Запуск переведёт готовые заявки в подбор. Поисковый запрос сохраняется для кампании.</p>
+    <%= form_with scope: :recruitment_campaign, url: launch_recruitment_campaign_path(@campaign), class: "form-stack" do |f| %>
+      <div class="field">
+        <%= f.label :search_query, "Поисковый запрос" %>
+        <%= f.text_area :search_query, value: form_value(:recruitment_campaign, :search_query, @campaign.search_query), required: true %>
+      </div>
+      <%= f.submit "Запустить подбор", class: "button", data: { turbo_submits_with: "Запускаем…" } %>
+    <% end %>
+  <% end %>
+</div>

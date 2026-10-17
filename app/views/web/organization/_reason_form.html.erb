@@ -1,0 +1,6 @@
+<%= form_with scope: :rejection_reason, url: @reason.persisted? ? rejection_reason_path(@reason) : rejection_reasons_path, method: @reason.persisted? ? :patch : :post, class: "form-stack" do |f| %>
+  <div class="field"><%= f.label :name, "Название причины" %><%= f.text_field :name, value: form_value(:rejection_reason, :name, @reason.name), required: true, maxlength: 200 %></div>
+  <label class="check"><%= f.check_box :active, checked: ActiveModel::Type::Boolean.new.cast(form_value(:rejection_reason, :active, @reason.active)) %>Причина доступна при завершении рассмотрения</label>
+  <p class="hint">Неактивная причина останется в истории уже завершённых рассмотрений.</p>
+  <div class="actions"><%= f.submit "Сохранить", class: "button", data: { turbo_submits_with: "Сохраняем…" } %><%= link_to "Отмена", rejection_reasons_path, class: "button button--quiet" %></div>
+<% end %>

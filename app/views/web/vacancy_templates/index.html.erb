@@ -1,0 +1,10 @@
+<% content_for :title, "Шаблоны вакансий" %>
+<header class="page-header"><div><h1>Шаблоны вакансий</h1><p class="muted">Утверждённые требования для новых заявок.</p></div><% if allowed?("manage.vacancy_template") %><%= link_to "Создать шаблон", new_vacancy_template_path, class: "button" %><% end %></header>
+<%= render "web/shared/search", url: vacancy_templates_path, label: "Поиск по названию вакансии", placeholder: "Начните вводить название" %>
+<%= turbo_frame_tag "workflow_list", data: { turbo_action: "advance" } do %>
+<% if @templates.any? %><div class="table-wrap"><table><thead><tr><th>Название</th><th>Статус</th><th>Версия</th></tr></thead><tbody>
+<% @templates.each do |record| %><tr id="<%= dom_id(record) %>"><td data-label="Название"><%= link_to record.latest_version&.title || "Шаблон №#{record.id}", vacancy_template_path(record), data: { turbo_frame: "_top" } %></td><td data-label="Статус"><%= state_badge(record.status) %></td><td data-label="Версия"><%= record.latest_version&.version_number %></td></tr><% end %>
+</tbody></table></div>
+<% else %><div class="empty"><h2>Записей пока нет</h2><p class="muted">Здесь появятся доступные вам записи. Если используете поиск, попробуйте изменить запрос.</p></div><% end %>
+<%= render "web/shared/pagination" %>
+<% end %>

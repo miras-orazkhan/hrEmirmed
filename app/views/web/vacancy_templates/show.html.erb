@@ -1,0 +1,36 @@
+<% content_for :title, @version.title %>
+
+<header class="page-header">
+  <div>
+    <%= link_to "Шаблоны вакансий", vacancy_templates_path %>
+    <h1><%= @version.title %></h1>
+    <p><%= state_badge(@template.status) %> <span class="hint">Версия <%= @version.version_number %></span></p>
+  </div>
+  <div class="actions">
+    <% if allowed?("manage.vacancy_template") %>
+      <%= link_to "Редактировать", edit_vacancy_template_path(@template), class: "button button--secondary" %>
+    <% end %>
+    <% if allowed?("approve.vacancy_template") && @template.status == "draft" %>
+      <%= button_to "Утвердить шаблон", approve_vacancy_template_path(@template), class: "button", data: { turbo_submits_with: "Утверждаем…" } %>
+    <% end %>
+  </div>
+</header>
+
+<div class="document">
+  <h2>Обязанности</h2>
+  <%= simple_format(@version.duties) %>
+
+  <% { professional_skills: "Профессиональные навыки", mandatory_requirements: "Обязательные требования", preferred_requirements: "Желательные требования", screening_questions: "Вопросы первичного отбора", internship_criteria: "Критерии стажировки" }.each do |field, label| %>
+    <% if @version.public_send(field).any? %>
+      <h2><%= label %></h2>
+      <ul>
+        <% @version.public_send(field).each do |value| %>
+          <li><%= value %></li>
+        <% end %>
+      </ul>
+    <% end %>
+  <% end %>
+
+  <h2>Стажировка</h2>
+  <p><%= @version.internship_required? ? "Обязательна" : "Не обязательна" %></p>
+</div>

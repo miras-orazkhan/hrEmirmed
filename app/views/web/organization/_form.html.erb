@@ -1,0 +1,13 @@
+<% fields = { "branches" => %i[name address], "departments" => %i[name branch_id], "legal_entities" => %i[name registration_number] }.fetch(resource_name) %>
+<%= form_with scope: @record.model_name.param_key, url: @record.persisted? ? public_send("#{resource_name.singularize}_path", @record) : public_send("#{resource_name}_path"), method: @record.persisted? ? :patch : :post, class: "form-stack" do |f| %>
+  <div class="field"><%= f.label :name, "Название" %><%= f.text_field :name, value: form_value(@record.model_name.param_key, :name, @record.name), required: true, maxlength: 200 %></div>
+  <% case resource_name %>
+  <% when "branches" %>
+    <div class="field"><%= f.label :address, "Адрес" %><%= f.text_field :address, value: form_value(:branch, :address, @record.address), maxlength: 500 %></div>
+  <% when "departments" %>
+    <div class="field"><%= f.label :branch_id, "Филиал" %><%= f.select :branch_id, options_from_collection_for_select(@branches, :id, :name, form_value(:department, :branch_id, @record.branch_id)), { prompt: "Выберите филиал" }, required: true %></div>
+  <% when "legal_entities" %>
+    <div class="field"><%= f.label :registration_number, "Регистрационный номер" %><%= f.text_field :registration_number, value: form_value(:legal_entity, :registration_number, @record.registration_number), maxlength: 100 %></div>
+  <% end %>
+  <div class="actions"><%= f.submit "Сохранить", class: "button", data: { turbo_submits_with: "Сохраняем…" } %><%= link_to "Отмена", public_send("#{resource_name}_path"), class: "button button--quiet" %></div>
+<% end %>

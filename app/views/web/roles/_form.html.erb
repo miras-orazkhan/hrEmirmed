@@ -1,0 +1,9 @@
+<%= form_with scope: :role, url: @role.persisted? ? role_path(@role) : roles_path, method: @role.persisted? ? :patch : :post, class: "form-stack" do |f| %>
+  <div class="field"><%= f.label :name, "Название роли" %><%= f.text_field :name, value: form_value(:role, :name, @role.name), required: true, maxlength: 200 %></div>
+  <fieldset><legend>Разрешения</legend><p class="hint">Отметьте действия, доступные сотрудникам с этой ролью.</p>
+    <% Role::PERMISSIONS.each do |permission| %>
+      <label class="check"><%= check_box_tag "role[permissions][]", permission, Array(form_value(:role, :permissions, @role.permissions)).include?(permission), id: "role_permission_#{permission.parameterize}" %><%= Web::RolesController::PERMISSION_LABELS.fetch(permission) %></label>
+    <% end %>
+  </fieldset>
+  <div class="actions"><%= f.submit @role.persisted? ? "Сохранить изменения" : "Создать роль", class: "button", data: { turbo_submits_with: "Сохраняем…" } %><%= link_to "Отмена", roles_path, class: "button button--quiet", data: { turbo_frame: "_top" } %></div>
+<% end %>

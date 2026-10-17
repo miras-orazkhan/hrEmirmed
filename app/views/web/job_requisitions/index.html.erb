@@ -1,0 +1,10 @@
+<% content_for :title, "Заявки на подбор" %>
+<header class="page-header"><div><h1>Заявки на подбор</h1><p class="muted">Условия, свободные места и состояние подбора.</p></div><% if allowed?("create.job_requisition") %><%= link_to "Создать заявку", new_job_requisition_path, class: "button" %><% end %></header>
+<%= render "web/shared/search", url: job_requisitions_path, label: "Поиск по названию вакансии", placeholder: "Начните вводить название" %>
+<%= turbo_frame_tag "workflow_list", data: { turbo_action: "advance" } do %>
+<% if @requisitions.any? %><div class="table-wrap"><table><thead><tr><th>Вакансия</th><th>Подразделение</th><th>Статус</th><th>Места</th></tr></thead><tbody>
+<% @requisitions.each do |record| %><tr id="<%= dom_id(record) %>"><td data-label="Вакансия"><%= link_to record.vacancy_template_version.title, job_requisition_path(record), data: { turbo_frame: "_top" } %></td><td data-label="Подразделение"><%= record.department.name %></td><td data-label="Статус"><%= state_badge(record.status) %></td><td data-label="Места"><%= record.filled_positions_count %> / <%= record.positions_count %></td></tr><% end %>
+</tbody></table></div>
+<% else %><div class="empty"><h2>Записей пока нет</h2><p class="muted">Здесь появятся доступные вам записи. Если используете поиск, попробуйте изменить запрос.</p></div><% end %>
+<%= render "web/shared/pagination" %>
+<% end %>

@@ -1,0 +1,4 @@
+<% content_for :title, "Не удалось выполнить действие" %>
+<%= turbo_frame_tag(request.headers["Turbo-Frame"].presence || "workflow_error") do %>
+  <div class="empty" role="alert"><h1>Не удалось выполнить действие</h1><p><%= @error_message %></p><%= link_to "Вернуться в рабочее пространство", root_path, class: "button button--secondary", data: { turbo_frame: "_top" } %></div>
+<% end %>

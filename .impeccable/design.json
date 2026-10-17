@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-17T00:00:00Z",
+  "title": "Design System: HR Emirmed",
+  "extensions": {
+    "colorMeta": {
+      "background": { "role": "neutral", "displayName": "Светлый холодный фон", "canonical": "#f3f6f8" },
+      "surface": { "role": "neutral", "displayName": "Белая поверхность", "canonical": "#ffffff" },
+      "ink": { "role": "neutral", "displayName": "Тёмный текст", "canonical": "#152c3b" },
+      "muted": { "role": "neutral", "displayName": "Вторичный текст", "canonical": "#526572" },
+      "accent": { "role": "primary", "displayName": "Зелёный акцент", "canonical": "#126654" },
+      "line": { "role": "neutral", "displayName": "Линия", "canonical": "#ccd7dd" },
+      "focus": { "role": "primary", "displayName": "Контур фокуса", "canonical": "#126654" },
+      "danger": { "role": "tertiary", "displayName": "Красный сигнал", "canonical": "#9d292b" },
+      "selection": { "role": "secondary", "displayName": "Выделение текста", "canonical": "#c9e8dd" },
+      "active-surface": { "role": "secondary", "displayName": "Активная поверхность", "canonical": "#dcefe8" },
+      "active-ink": { "role": "secondary", "displayName": "Активный тёмно-зелёный", "canonical": "#104b3f" },
+      "warning-surface": { "role": "tertiary", "displayName": "Поверхность предупреждения", "canonical": "#fff1d6" },
+      "warning-ink": { "role": "tertiary", "displayName": "Текст предупреждения", "canonical": "#684208" },
+      "error-surface": { "role": "tertiary", "displayName": "Поверхность ошибки", "canonical": "#fde9e8" },
+      "error-ink": { "role": "tertiary", "displayName": "Текст ошибки", "canonical": "#86292b" }
+    },
+    "typographyMeta": {
+      "body": { "displayName": "Основной текст", "purpose": "Русскоязычный текст интерфейса." },
+      "headline": { "displayName": "Заголовок", "purpose": "Заголовки страниц, font-weight 700." },
+      "title": { "displayName": "Вторичный заголовок", "purpose": "Заголовки h2, font-weight 700; бренд отдельно имеет font-weight 750." },
+      "label": { "displayName": "Подпись", "purpose": "Подписи полей и контролов." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "frame-busy", "value": "opacity 150ms ease-out", "purpose": "Показывает загрузку Turbo Frame." }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "800px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Основное действие формы или страницы.",
+      "html": "<button class=\"ds-button-primary\">Сохранить</button>",
+      "css": ".ds-button-primary { background: var(--accent); color: #fff; padding: 9px 16px; min-height: 42px; border: 1px solid transparent; border-radius: 6px; font: 600 14px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif; } .ds-button-primary:hover { background: #0b5142; } .ds-button-primary:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Вторичное действие рядом с основным.",
+      "html": "<button class=\"ds-button-secondary\">Отмена</button>",
+      "css": ".ds-button-secondary { background: var(--surface); color: var(--ink); padding: 9px 16px; min-height: 42px; border: 1px solid var(--line); border-radius: 6px; font: 600 14px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif; } .ds-button-secondary:hover { background: #e7eef1; } .ds-button-secondary:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Поле поиска или формы с видимым фокусом.",
+      "html": "<label class=\"ds-field\">Поиск<input class=\"ds-input\" type=\"search\" placeholder=\"Введите запрос\"></label>",
+      "css": ".ds-field { display: grid; gap: 8px; color: var(--ink); font: 600 14px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif; } .ds-input { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid #a5b5bf; border-radius: 6px; background: var(--surface); color: var(--ink); font: 400 16px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif; } .ds-input:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }"
+    },
+    {
+      "name": "Status Chip",
+      "kind": "chip",
+      "description": "Компактная текстовая метка состояния.",
+      "html": "<span class=\"ds-status\">Активна</span>",
+      "css": ".ds-status { display: inline-block; padding: 3px 8px; border: 1px solid #badbce; border-radius: 4px; background: #dcefe8; color: #104b3f; font: 600 12px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif; }"
+    },
+    {
+      "name": "Document Surface",
+      "kind": "card",
+      "description": "Контейнер подробностей с тонкой границей.",
+      "html": "<section class=\"ds-document\"><strong>Карточка записи</strong><p>Подробные сведения и доступные действия.</p></section>",
+      "css": ".ds-document { max-width: 1040px; padding: 28px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); font: 400 16px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif; } .ds-document p { max-width: 72ch; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Операционная очередь",
+    "overview": "Интерфейс помогает сотруднику находить нужную запись и понимать её статус, ответственного и доступные действия. Светлые рабочие поверхности, спокойная типографика и устойчивые колонки поддерживают чтение длинных списков и форм на русском языке. Система извлечена из текущего Rails UI.",
+    "keyCharacteristics": [
+      "Русскоязычная рабочая поверхность с системным шрифтом без сетевой загрузки.",
+      "Реестры и карточки используют общие статусы, поля и навигацию.",
+      "Цвет статуса сопровождается текстовой меткой."
+    ],
+    "rules": [
+      { "name": "Правило читаемого статуса", "body": "Цвет статуса всегда сопровождается видимым текстом.", "section": "colors" }
+    ],
+    "dos": [
+      "Do использовать существующие CSS-переменные как источник цветовых значений.",
+      "Do сохранять контур клавиатурного фокуса и минимальные высоты контролов.",
+      "Do использовать breakpoint 800px для мобильной перестройки."
+    ],
+    "donts": [
+      "Don't добавлять внешние шрифты или CDN-зависимости к текущему интерфейсу.",
+      "Don't передавать смысл статуса только цветом.",
+      "Don't добавлять тени к поверхностям без изменения самой визуальной системы."
+    ]
+  }
+}

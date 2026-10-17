@@ -1,0 +1,3 @@
+<% content_for :title, @user.full_name %>
+<header class="page-header"><div><%= link_to "К списку", users_path, data: { turbo_frame: "_top" } %><h1><%= @user.full_name %></h1><p class="muted"><%= @user.login %></p></div><%= link_to "Изменить", edit_user_path(@user), class: "button", data: { turbo_frame: "_top" } %></header>
+<div class="document"><dl class="detail-list"><div><dt>Статус</dt><dd><%= @user.active? ? "Активен" : "Отключён" %></dd></div><div><dt>Роль</dt><dd><%= @user.role.name == "admin" ? "Администратор" : @user.role.name %></dd></div><div><dt>Филиал</dt><dd><%= @user.branch.name %></dd></div><div><dt>Подразделения</dt><dd><%= @user.departments.map(&:name).join(", ") %></dd></div></dl></div>

@@ -1,0 +1,50 @@
+<% content_for :title, @candidate.full_name %>
+<% can_edit = editable_candidate?(@candidate) %>
+
+<header class="page-header">
+  <div>
+    <%= link_to "Кандидаты", candidates_path %>
+    <h1><%= @candidate.full_name %></h1>
+    <p class="muted">Добавлен <%= date_label(@candidate.created_at) %> · Ответственный: <%= @candidate.responsible_recruiter.full_name %></p>
+  </div>
+  <% if can_edit %>
+    <%= link_to "Редактировать", edit_candidate_path(@candidate), class: "button button--secondary" %>
+  <% end %>
+</header>
+
+<div class="document">
+  <dl class="details">
+    <dt>Город</dt>
+    <dd><%= @candidate.city.presence || "Не указан" %></dd>
+    <dt>Язык общения</dt>
+    <dd><%= @candidate.preferred_language.presence || "Не указан" %></dd>
+    <dt>Контакты</dt>
+    <dd><% @candidate.contacts.each do |contact| %><div><%= contact.kind == "phone" ? "Телефон" : "Email" %>: <%= contact.value %></div><% end %><%= "Не указаны" if @candidate.contacts.empty? %></dd>
+    <dt>Заметки</dt>
+    <dd><%= @candidate.summary.presence || "Нет заметок" %></dd>
+  </dl>
+
+  <% if @candidate.sources.any? %>
+    <section class="section">
+      <h2>Источники</h2>
+      <ul>
+        <% @candidate.sources.each do |source| %>
+          <li><%= source.provider %> · <%= source.external_id %></li>
+        <% end %>
+      </ul>
+    </section>
+  <% end %>
+
+  <section class="section">
+    <div class="page-header">
+      <h2>Резюме</h2>
+      <%= link_to "Все файлы", candidate_resumes_path(@candidate) %>
+    </div>
+    <%= render "web/candidate_resumes/files", resumes: @resumes %>
+    <% if can_edit %>
+      <%= render "web/candidate_resumes/upload" %>
+    <% end %>
+  </section>
+
+  <%= render "web/candidates/applications" %>
+</div>

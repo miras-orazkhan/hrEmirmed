@@ -1,0 +1,21 @@
+<%= form_with scope: :user, url: @user.persisted? ? user_path(@user) : users_path, method: @user.persisted? ? :patch : :post, class: "form-stack" do |f| %>
+  <div class="field"><%= f.label :full_name, "ФИО" %><%= f.text_field :full_name, value: form_value(:user, :full_name, @user.full_name), required: true, maxlength: 200, autocomplete: "name" %></div>
+  <div class="field"><%= f.label :login, "Логин" %><%= f.text_field :login, value: form_value(:user, :login, @user.login), required: true, maxlength: 100, autocomplete: "username" %></div>
+  <div class="form-grid"><div class="field"><%= f.label :role_id, "Роль" %><%= f.select :role_id, @roles.map { |role| [role.name == "admin" ? "Администратор" : role.name, role.id] }, { selected: form_value(:user, :role_id, @user.role_id), prompt: "Выберите роль" }, required: true %></div><div class="field"><%= f.label :branch_id, "Филиал" %><%= f.select :branch_id, @branches.map { |branch| [branch.name, branch.id] }, { selected: form_value(:user, :branch_id, @user.branch_id), prompt: "Выберите филиал" }, required: true %></div></div>
+  <fieldset><legend>Подразделения</legend><p class="hint">Выберите подразделения того же филиала.</p>
+    <%= hidden_field_tag "user[department_ids][]", "" %>
+    <% selected_departments = form_value(:user, :department_ids, @user.department_ids).to_a.map(&:to_s) %>
+    <% @branches.each do |branch| %>
+      <fieldset><legend><%= branch.name %></legend>
+        <% Array(@departments_by_branch[branch.id]).each do |department| %>
+          <label class="check"><%= check_box_tag "user[department_ids][]", department.id, selected_departments.include?(department.id.to_s), id: "user_department_#{department.id}" %><%= department.name %></label>
+        <% end %>
+        <p class="hint"><%= "В этом филиале нет подразделений." if Array(@departments_by_branch[branch.id]).empty? %></p>
+      </fieldset>
+    <% end %>
+  </fieldset>
+  <label class="check"><%= f.check_box :active, checked: ActiveModel::Type::Boolean.new.cast(form_value(:user, :active, @user.active?)) %>Учётная запись активна</label>
+  <div class="field"><%= f.label :password, @user.persisted? ? "Новый пароль" : "Пароль" %><%= f.password_field :password, autocomplete: "new-password", required: !@user.persisted? %><span class="hint"><%= @user.persisted? ? "Оставьте пустым, чтобы сохранить текущий пароль." : "Не менее 12 символов." %></span></div>
+  <div class="field"><%= f.label :password_confirmation, "Повторите пароль" %><%= f.password_field :password_confirmation, autocomplete: "new-password", required: !@user.persisted? %></div>
+  <div class="actions"><%= f.submit @user.persisted? ? "Сохранить изменения" : "Создать сотрудника", class: "button", data: { turbo_submits_with: "Сохраняем…" } %><%= link_to "Отмена", users_path, class: "button button--quiet", data: { turbo_frame: "_top" } %></div>
+<% end %>

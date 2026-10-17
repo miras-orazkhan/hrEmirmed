@@ -1,0 +1,18 @@
+<article class="application-row" id="<%= dom_id(application) %>">
+  <div class="application-heading"><strong><%= application.job_requisition.vacancy_template_version.title %> · <%= application.job_requisition.department.name %></strong><div><%= state_badge(application.stage) %> <%= state_badge(application.status) %></div></div>
+  <p class="hint">Заявка №<%= application.job_requisition_id %> · Условия версии <%= application.job_requisition_version.version_number %> · Начато <%= date_label(application.created_at) %></p>
+  <% if application.status == "completed" %><p><%= state_label(application.outcome) %><% if application.rejection_reason %> · <%= application.rejection_reason.name %><% end %><br>Следующее рассмотрение: <%= application.allow_next_application ? "разрешено" : "не разрешено" %></p><p><%= application.decision_comment %></p><% end %>
+  <details><summary>Закреплённые условия</summary><dl class="details"><dt>График</dt><dd><%= application.job_requisition_version.work_schedule %></dd><dt>Зарплата</dt><dd><%= number_with_delimiter(application.job_requisition_version.salary_amount, delimiter: " ") %> <%= application.job_requisition_version.salary_currency %></dd><dt>Плановый выход</dt><dd><%= date_label(application.job_requisition_version.desired_start_on) %></dd></dl></details>
+  <% if decides_application?(application) %>
+    <% unless application.stage == "offer" %><%= button_to "Перевести на следующий этап", advance_candidate_application_path(application), class: "button button--secondary", data: { turbo_submits_with: "Переводим…", turbo_confirm: "Перевести кандидата на следующий этап?" } %><% else %><p class="hint">Достигнут этап предложения. Оформление найма пока не подключено.</p><% end %>
+    <details <%= "open" if @decision_application_id == application.id %>><summary>Завершить рассмотрение</summary>
+      <%= form_with scope: :candidate_application, url: finish_candidate_application_path(application), class: "form-stack", namespace: "decision_#{application.id}" do |f| %>
+        <div class="field"><%= f.label :outcome, "Решение" %><%= f.select :outcome, [["Отказ компании", "rejected"], ["Отказ кандидата", "withdrawn"]], { prompt: "Выберите решение", selected: @decision_application_id == application.id ? params.dig(:candidate_application, :outcome) : nil }, required: true %></div>
+        <div class="field"><%= f.label :rejection_reason_id, "Причина отказа компании" %><%= f.collection_select :rejection_reason_id, @rejection_reasons, :id, :name, { prompt: "Выберите причину при отказе компании", selected: @decision_application_id == application.id ? params.dig(:candidate_application, :rejection_reason_id) : nil } %></div>
+        <div class="field"><%= f.label :allow_next_application, "Можно предложить другую заявку?" %><%= f.select :allow_next_application, [["Да", "true"], ["Нет", "false"]], { prompt: "Примите решение", selected: @decision_application_id == application.id ? params.dig(:candidate_application, :allow_next_application) : nil }, required: true %></div>
+        <div class="field"><%= f.label :decision_comment, "Комментарий" %><%= f.text_area :decision_comment, value: @decision_application_id == application.id ? params.dig(:candidate_application, :decision_comment) : nil %></div>
+        <%= f.submit "Завершить рассмотрение", class: "button", data: { turbo_submits_with: "Сохраняем…" } %>
+      <% end %>
+    </details>
+  <% end %>
+</article>

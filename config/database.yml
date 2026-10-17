@@ -1,0 +1,33 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+  host: <%= ENV.fetch("DB_HOST", "127.0.0.1").to_json %>
+  port: <%= ENV.fetch("DB_PORT", Rails.env.production? ? 5432 : 5433) %>
+  username: <%= ENV.fetch("DB_USERNAME", Rails.env.production? ? "hr_emirmed" : "postgres").to_json %>
+  password: <%= ENV.fetch("DB_PASSWORD", Rails.env.production? ? ENV["HR_EMIRMED_DATABASE_PASSWORD"] : "password").to_json %>
+
+development:
+  <<: *default
+  database: hr_emirmed_development
+
+test:
+  <<: *default
+  database: hr_emirmed_test
+
+production:
+  primary: &primary_production
+    <<: *default
+    database: hr_emirmed_production
+  cache:
+    <<: *primary_production
+    database: hr_emirmed_production_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_production
+    database: hr_emirmed_production_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_production
+    database: hr_emirmed_production_cable
+    migrations_paths: db/cable_migrate

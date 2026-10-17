@@ -1,0 +1,11 @@
+<%= form_with scope: :vacancy_template, url: @template.persisted? ? vacancy_template_path(@template) : vacancy_templates_path, method: @template.persisted? ? :patch : :post, class: "form-stack" do |f| %>
+  <div class="field"><%= f.label :title, "Название вакансии" %><%= f.text_field :title, value: form_value(:vacancy_template, :title, @version&.title), required: true, maxlength: 200 %></div>
+  <div class="field"><%= f.label :recruiter_id, "Ответственный рекрутер" %><%= f.select :recruiter_id, @recruiters.map { |user| [user.full_name, user.id] }, { selected: form_value(:vacancy_template, :recruiter_id, @template.recruiter_id), prompt: "Выберите рекрутера" }, required: true %></div>
+  <div class="field"><%= f.label :duties, "Обязанности" %><%= f.text_area :duties, value: form_value(:vacancy_template, :duties, @version&.duties), required: true, rows: 5 %></div>
+  <% { professional_skills: "Профессиональные навыки", mandatory_requirements: "Обязательные требования", preferred_requirements: "Желательные требования", screening_questions: "Вопросы первичного отбора", internship_criteria: "Критерии стажировки" }.each do |field, label| %>
+    <div class="field"><%= f.label "#{field}_lines", label %><%= f.text_area "#{field}_lines", value: form_value(:vacancy_template, "#{field}_lines", Array(@version&.public_send(field)).join("\n")), rows: 3 %><span class="hint">Каждый пункт с новой строки.</span></div>
+  <% end %>
+  <label class="check"><%= f.check_box :internship_required, checked: ActiveModel::Type::Boolean.new.cast(form_value(:vacancy_template, :internship_required, @version&.internship_required)) %>Стажировка обязательна</label>
+  <p class="hint">Изменения создают новую версию. Перед использованием шаблон нужно утвердить.</p>
+  <div class="actions"><%= f.submit "Сохранить шаблон", class: "button", data: { turbo_submits_with: "Сохраняем…" } %><%= link_to "Отмена", vacancy_templates_path, class: "button button--quiet" %></div>
+<% end %>

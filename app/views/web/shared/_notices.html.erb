@@ -1,0 +1,3 @@
+<% flash.each do |kind, message| %><div class="notice <%= 'notice--error' if kind == 'alert' %>" role="status"><%= message %></div><% end %>
+<% errors = Array(@errors).presence || Array(@web_error_message).compact %>
+<% if errors.any? %><div class="notice notice--error" role="alert" tabindex="-1"><strong>Проверьте данные</strong><ul><% errors.each do |error| %><li><%= error %></li><% end %></ul></div><% end %>

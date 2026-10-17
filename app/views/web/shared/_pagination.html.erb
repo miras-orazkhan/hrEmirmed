@@ -1,0 +1,12 @@
+<div class="pagination">
+  <% if params[:cursor].present? %>
+    <%= link_to "К началу списка",
+      url_for(only_path: true, q: params[:q], department_id: params[:department_id], status: params[:status]),
+      class: "button button--quiet" %>
+  <% end %>
+  <% if @next_cursor %>
+    <%= link_to "Следующие 50",
+      url_for(only_path: true, cursor: @next_cursor, q: params[:q], department_id: params[:department_id], status: params[:status]),
+      class: "button button--secondary", rel: "next" %>
+  <% end %>
+</div>

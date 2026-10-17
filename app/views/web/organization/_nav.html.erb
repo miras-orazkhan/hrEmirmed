@@ -1,0 +1,7 @@
+<nav class="subnav" aria-label="Справочники организации">
+  <% if allowed?("read.organization") %>
+    <%= link_to "Филиалы", branches_path %>
+    <%= link_to "Подразделения", departments_path %>
+    <%= link_to "Юридические лица", legal_entities_path %>
+  <% end %>
+</nav>

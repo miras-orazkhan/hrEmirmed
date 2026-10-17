@@ -1,0 +1,55 @@
+<% content_for :title, "Кандидаты" %>
+
+<header class="page-header">
+  <div>
+    <h1>Кандидаты</h1>
+    <p class="muted">Поиск контактов, резюме и истории подбора.</p>
+  </div>
+  <% if allowed?("create.candidate") %>
+    <%= link_to "Добавить кандидата", new_candidate_path, class: "button" %>
+  <% end %>
+</header>
+
+<%= render "web/shared/search", url: candidates_path, label: "Поиск кандидата", placeholder: "Начало ФИО, полный телефон или email" %>
+
+<%= turbo_frame_tag "workflow_list", data: { turbo_action: "advance" } do %>
+  <% if @candidates.any? %>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Кандидат</th>
+            <th>Контакты</th>
+            <th>Город</th>
+            <th>Добавлен</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @candidates.each do |candidate| %>
+            <tr id="<%= dom_id(candidate) %>">
+              <td data-label="Кандидат">
+                <strong><%= link_to candidate.full_name, candidate_path(candidate), data: { turbo_frame: "_top" } %></strong>
+              </td>
+              <td data-label="Контакты">
+                <div>
+                  <% candidate.contacts.each do |contact| %>
+                    <span class="contact-value"><%= contact.value %></span><br>
+                  <% end %>
+                  <%= "Не указаны" if candidate.contacts.empty? %>
+                </div>
+              </td>
+              <td data-label="Город"><%= candidate.city.presence || "—" %></td>
+              <td data-label="Добавлен"><%= date_label(candidate.created_at) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="empty">
+      <h2><%= @query.present? ? "Ничего не найдено" : "Кандидатов пока нет" %></h2>
+      <p class="muted"><%= @query.present? ? "Измените запрос. Для телефона и email укажите полный контакт." : "Добавьте первого кандидата, чтобы сохранить контакты и начать подбор." %></p>
+    </div>
+  <% end %>
+  <%= render "web/shared/pagination" %>
+<% end %>

@@ -1,0 +1,10 @@
+<%= turbo_frame_tag dom_id(@candidate, :applications) do %>
+  <section class="section"><h2>Рассмотрения</h2><%= render "web/shared/notices" if turbo_frame_request? %><p class="hint">Показаны последние 50 доступных вам рассмотрений. Условия закрепляются на момент начала.</p>
+    <% if @applications.empty? %><p class="muted">Доступных рассмотрений пока нет.</p><% end %>
+    <% @applications.each do |application| %><%= render "web/candidates/application", application: application %><% end %>
+    <% if @available_requisitions.any? && @applications.none? { |application| application.status == "active" } %>
+      <h3>Начать рассмотрение</h3>
+      <%= form_with scope: :candidate_application, url: candidate_applications_path, class: "form-stack", data: { turbo_frame: "_top" } do |f| %><%= f.hidden_field :candidate_id, value: @candidate.id %><div class="field"><%= f.label :job_requisition_id, "Заявка на подбор" %><%= f.select :job_requisition_id, @available_requisitions.map { |request| ["#{request.vacancy_template_version.title} · #{request.department.name} · №#{request.id}", request.id] }, { prompt: "Выберите заявку", selected: form_value(:candidate_application, :job_requisition_id) }, required: true %></div><%= f.submit "Начать рассмотрение", class: "button", data: { turbo_submits_with: "Сохраняем…" } %><% end %>
+    <% end %>
+  </section>
+<% end %>

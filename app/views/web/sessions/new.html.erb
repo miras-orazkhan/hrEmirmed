@@ -1,0 +1,12 @@
+<% content_for :title, "Вход" %>
+<section class="login-panel">
+  <span class="brand">HR Emirmed</span>
+  <h1>Вход в рабочее пространство</h1>
+  <p class="muted">Кандидаты, заявки и подбор в одном месте.</p>
+  <%= form_with scope: :session, url: session_path, class: "form-stack" do |f| %>
+    <div class="field"><%= f.label :login, "Логин" %><%= f.text_field :login, value: params.dig(:session, :login), required: true, autocomplete: "username", autofocus: true %></div>
+    <div class="field"><%= f.label :password, "Пароль" %><%= f.password_field :password, required: true, autocomplete: "current-password" %></div>
+    <%= f.submit "Войти", class: "button", data: { turbo_submits_with: "Входим…" } %>
+  <% end %>
+  <p class="hint">Учётную запись предоставляет администратор вашей организации.</p>
+</section>

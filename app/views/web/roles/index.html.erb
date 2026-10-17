@@ -1,0 +1,12 @@
+<% content_for :title, "Роли" %>
+<header class="page-header"><div><h1>Роли</h1><p class="muted">Наборы разрешений для сотрудников.</p></div><%= link_to "Добавить роль", new_role_path, class: "button" %></header>
+<%= turbo_frame_tag "workflow_list", data: { turbo_action: "advance" } do %>
+  <% if @roles.any? %>
+    <div class="table-wrap"><table><thead><tr><th>Роль</th><th>Разрешения</th><th></th></tr></thead><tbody>
+      <% @roles.each do |role| %><tr id="<%= dom_id(role) %>"><td data-label="Роль"><strong><%= role.name == "admin" ? "Администратор" : role.name %></strong></td><td data-label="Разрешения"><%= role.admin? ? "Все разрешения" : role.permissions.map { |permission| Web::RolesController::PERMISSION_LABELS.fetch(permission, permission) }.join(", ") %></td><td data-label="Действия"><%= link_to "Изменить", edit_role_path(role), data: { turbo_frame: "_top" } %></td></tr><% end %>
+    </tbody></table></div>
+  <% else %>
+    <div class="empty"><h2>Ролей пока нет</h2><p class="muted">Создайте роль и назначьте ей разрешения.</p></div>
+  <% end %>
+  <%= render "web/shared/pagination" %>
+<% end %>
